@@ -6,7 +6,7 @@ const movieSchema =mongoose.Schema({
 	},
 	poster:String,//简介
 	rating:String,//评分
-	introductin:String,//介绍
+	introduction:String,//介绍
 	createdTime:{//创建时间
 		type:Date,
 		default:Date.now

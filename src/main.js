@@ -8,17 +8,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
-// axios.post('/api/movie',{
-// 	title:'kk',
-//   poster: 'jj',
-//   introduction: 'gg',
-//   rating: '8',
-// }).then(res=>{
-// 	console.log(res.data)
-// })
-// .catch(e=>{
-// 	console.log(e)
-// })
+Vue.prototype.$http = axios;
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
