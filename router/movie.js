@@ -15,8 +15,8 @@ router.post('/movie',(req,res)=>{
 
  //删除一部电影
  router.delete('/movie/:id',(req,res) =>{
- 	MOvie.findOneAndRemove({
- 		id:req.params.id
+ 	Movie.findOneAndRemove({
+ 		_id:req.params.id
  	})
  	.then(movie =>res.send(`${movie.title}删除成功`))
  	.catch(err =>res.json(err))
