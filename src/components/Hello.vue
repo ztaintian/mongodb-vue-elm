@@ -1,5 +1,7 @@
 <template>
   <div class="hello">
+  <el-button class="search" type="primary" @click="seach" icon="search">评分搜索</el-button>
+  <el-input v-model="seachData"></el-input>
   <el-table
     :data="tableData"
     border
@@ -51,10 +53,6 @@
         <el-form-item label="介绍">
           <el-input type="textarea" v-model="formLabelAlign.introduction"></el-input>
         </el-form-item>
-<!--         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-          <el-button @click="resetForm">重置</el-button>
-        </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -92,6 +90,7 @@ export default {
       dialogVisible: false,
       labelPosition: 'right',
       id:'',
+      seachData:'',
       formLabelAlign: {
         title: '',
         poster: '',
@@ -112,6 +111,29 @@ export default {
     this.getAllMovies();
   },
   methods:{
+    seach(){
+      let id = this.seachData;
+      this.$http.get(`/api/movie/${id}`).then(res=>{
+        console.log(res.data);
+        console.log(this.tableData);
+        let arr = [];
+        arr.push(res.data);
+        arr.forEach(function(value){
+          var d = new Date(value.createdTime);
+          var year = d.getFullYear();
+          var month = d.getMonth() + 1 < 10?'0' +(d.getMonth()+1):''+ d.getMonth();
+          var day = d.getDate() <10 ? '0' + d.getDate() : '' + d.getDate();
+          var hour = d.getHours()<10?'0' + d.getHours() : '' + d.getHours();
+          var minutes = d.getMinutes()<10? '0' + d.getMinutes() : '' + d.getMinutes();
+          var seconds = d.getSeconds()<10? '0' + d.getSeconds() : '' +  d.getSeconds();
+          value.createdTime = year+ '-' + month + '-' + day + ' ' + hour + ':' + minutes + ':' + seconds;
+        })
+        this.tableData = arr;
+        console.log(this.tableData)
+      }).catch(err=>{
+        console.log(err);
+      })
+    },
     modify(id){
       console.log(this.formLabelAlign)
       this.$http.put(`/api/movie/${id}`,this.formLabelAlign).then(res=>{
@@ -188,6 +210,15 @@ export default {
 <style scoped>
 .button{
   margin-top: 15px;
-  text-align:center; 
+  text-align:center;
+}
+.el-input, .el-input__inner{
+  width:200px;
+  margin-top:15px;
+  float: right;
+}
+.search {
+  margin:15px;
+  float:right;
 }
 </style>
