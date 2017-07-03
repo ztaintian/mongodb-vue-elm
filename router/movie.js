@@ -24,7 +24,7 @@ router.post('/movie',(req,res)=>{
 
  // 修改一部电影
  router.put('/movie/:id',(req,res)=>{
- 	MOvie.findOneAndUpdate(
+ 	Movie.findOneAndUpdate(
  	{
  		_id:req.params.id
  	},

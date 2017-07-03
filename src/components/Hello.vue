@@ -86,7 +86,7 @@ export default {
           callback();
         }
       }, 200);
-    };    
+    };
     return {
       tableData: [],
       dialogVisible: false,
@@ -101,11 +101,11 @@ export default {
       rules:{
         title: [
           { validator: checkTitle, trigger: 'blur' }
-        ],       
+        ],
         rating: [
           { validator: checkRating, trigger: 'blur' }
-        ]        
-      }      
+        ]
+      }
     }
   },
   mounted(){
@@ -113,6 +113,7 @@ export default {
   },
   methods:{
     modify(id){
+      console.log(this.formLabelAlign)
       this.$http.put(`/api/movie/${id}`,this.formLabelAlign).then(res=>{
         console.log(res);
       }).catch(err=>{
@@ -124,7 +125,8 @@ export default {
         if (valid) {
           this.dialogVisible = false;
           this.modify(this.id);
-        } else {
+          this.getAllMovies();
+        }else{
           console.log('error submit!!');
           return false;
         }
@@ -143,7 +145,6 @@ export default {
     del(index,value){
       let id = value[index]._id;
       this.$http.delete(`/api/movie/${id}`).then(res=>{
-        console.log(res);
         this.getAllMovies();
       })
     },
