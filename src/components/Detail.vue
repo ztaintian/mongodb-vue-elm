@@ -50,6 +50,12 @@ export default {
        console.log(e)
       })
     }
+  },
+  filters:{
+    dataFilter:(data)=> {
+      let str = new Date(data);
+      console.log(str)
+    }
   }
 }
 </script>
