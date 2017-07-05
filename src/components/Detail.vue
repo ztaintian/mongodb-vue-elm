@@ -77,7 +77,7 @@ export default {
   	},
     addMovies(){
       this.$http.post('/api/movie',this.formLabelAlign).then(res=>{
-        if(res.status){
+        if(res.status === 200){
           this.$message({
             message: '电影添加成功',
             type: 'success',
