@@ -2,47 +2,52 @@
   <div class="hello">
   <el-button class="search" type="primary" @click="seach" icon="search">评分搜索</el-button>
   <el-input class="search_ipt" v-model="seachData"></el-input>
-  <el-table
-    :data="tableData"
+  <el-table 
+    :data="tableData" 
     border
-    align="center"
-    style="width: 100%">
+    :default-sort = "{prop: 'createdTime', order:'descending'}" 
+    height="500"
+    >
       <el-table-column
+        align="center"
         prop="createdTime"
         label="创建时间"
-        width="180">
+        width="180"
+        sortable>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="title"
         label="电影名称"
         width="180">
       </el-table-column>
       <el-table-column
+        align="center"
         prop="rating"
         label="评分"
-        width="180">
+        width="180"
+        sortable
+        >
       </el-table-column>
       <el-table-column
+        align="center"
         prop="introduction"
         label="介绍">
       </el-table-column>
       <el-table-column
+        align="center"
         label="操作"
         width="180">
         <template scope="scope">
-          <el-button @click="del(scope.$index, tableData)" type="text" size="small">删除</el-button>
-          <el-button type="text" @click="edit(scope.$index, tableData)" size="small">编辑</el-button>
+          <el-button @click="del(scope.$index, tableData)" type="danger" size="small">删除</el-button>
+          <el-button @click="edit(scope.$index, tableData)" size="small">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
     <div class="button">
       <el-button type="primary" icon="plus" @click="add()">增加</el-button>
     </div>
-    <el-dialog
-    title="编辑"
-    :visible.sync="dialogVisible"
-    size="tiny"
-    :before-close="handleClose">
+    <el-dialog title="编辑" :visible.sync="dialogVisible" size="tiny" :before-close="handleClose">
       <el-form :label-position="labelPosition" :rules="rules" ref="ruleForm" label-width="80px" :model="formLabelAlign">
         <el-form-item label="电影名称" prop="title">
           <el-input v-model="formLabelAlign.title"></el-input>
@@ -114,18 +119,7 @@ export default {
     seach(){
       let id = this.seachData;
       this.$http.get(`/api/movie/${id}`).then(res=>{
-        // let arr = [];
-        // arr.push(res.data);
-        res.data.forEach(function(value){
-          var d = new Date(value.createdTime);
-          var year = d.getFullYear();
-          var month = d.getMonth() + 1 < 10?'0' +(d.getMonth()+1):''+ d.getMonth();
-          var day = d.getDate() <10 ? '0' + d.getDate() : '' + d.getDate();
-          var hour = d.getHours()<10?'0' + d.getHours() : '' + d.getHours();
-          var minutes = d.getMinutes()<10? '0' + d.getMinutes() : '' + d.getMinutes();
-          var seconds = d.getSeconds()<10? '0' + d.getSeconds() : '' +  d.getSeconds();
-          value.createdTime = year+ '-' + month + '-' + day + ' ' + hour + ':' + minutes + ':' + seconds;
-        })
+        this.dataFilter(res.data);        
         this.tableData = res.data;
       }).catch(err=>{
         console.log(err);
@@ -134,6 +128,20 @@ export default {
     modify(id){
       this.$http.put(`/api/movie/${id}`,this.formLabelAlign).then(res=>{
         console.log(res);
+        if(res.status === 200){
+          this.$message({
+            message: '电影修改成功',
+            type: 'success',
+            duration:1000
+          })
+          this.getAllMovies();
+        }else{
+          this.$message({
+            message: '电影修改失败',
+            type: 'error',
+            duration:1000
+          })
+        }
       }).catch(err=>{
         console.log(err);
       })
@@ -153,42 +161,58 @@ export default {
     handleClose(done) {
       done();
     },
-    edit(index,value){
+    edit(index,value){//编辑电影
       this.dialogVisible = true;
       this.id = value[index]._id;
     },
     add(){//增加
       this.$router.push('Detail')
     },
-    del(index,value){
+    del(index,value){//删除电影
       let id = value[index]._id;
       this.$http.delete(`/api/movie/${id}`).then(res=>{
-        this.getAllMovies();
+        if(res.status === 200){
+          this.$message({
+            message: '电影删除成功',
+            type: 'success',
+            duration:1000
+          })
+          this.getAllMovies();
+        }else{
+          this.$message({
+            message: '电影删除失败',
+            type: 'error',
+            duration:1000
+          })
+        }
+        
       })
     },
     getAllMovies(){
       this.$http.get('/api/movie',{}).then(res=>{
-        res.data.forEach(function(value){
-          var d = new Date(value.createdTime);
-          var year = d.getFullYear();
-          var month = d.getMonth() + 1 < 10?'0' +(d.getMonth()+1):''+ d.getMonth();
-          var day = d.getDate() <10 ? '0' + d.getDate() : '' + d.getDate();
-          var hour = d.getHours()<10?'0' + d.getHours() : '' + d.getHours();
-          var minutes = d.getMinutes()<10? '0' + d.getMinutes() : '' + d.getMinutes();
-          var seconds = d.getSeconds()<10? '0' + d.getSeconds() : '' +  d.getSeconds();
-          value.createdTime = year+ '-' + month + '-' + day + ' ' + hour + ':' + minutes + ':' + seconds;
-        })
+        this.dataFilter(res.data);
         this.tableData = res.data;
       })
       .catch(e=>{
        console.log(e)
+      })
+    },
+    dataFilter(arr){//时间格式化
+      arr.forEach(function(value){
+        var d = new Date(value.createdTime);
+        var year = d.getFullYear();
+        var month = d.getMonth() + 1 < 10?'0' +(d.getMonth()+1):''+ d.getMonth();
+        var day = d.getDate() <10 ? '0' + d.getDate() : '' + d.getDate();
+        var hour = d.getHours()<10?'0' + d.getHours() : '' + d.getHours();
+        var minutes = d.getMinutes()<10? '0' + d.getMinutes() : '' + d.getMinutes();
+        var seconds = d.getSeconds()<10? '0' + d.getSeconds() : '' +  d.getSeconds();
+        value.createdTime = year+ '-' + month + '-' + day + ' ' + hour + ':' + minutes + ':' + seconds;
       })
     }
   },
   filters:{
     dataFilter:function(data){
       let str = new Date(data);
-      console.log(str)
       var d = new Date(str);
       var year = d.getFullYear();
       var month = d.getMonth() + 1 < 10?'0' +(d.getMonth()+1):''+d.getMonth();

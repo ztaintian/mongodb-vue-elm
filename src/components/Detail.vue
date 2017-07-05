@@ -77,7 +77,23 @@ export default {
   	},
     addMovies(){
       this.$http.post('/api/movie',this.formLabelAlign).then(res=>{
-       this.$router.push('/');
+        if(res.status){
+          this.$message({
+            message: '电影添加成功',
+            type: 'success',
+            duration:1000,
+            onClose:()=>{
+              this.$router.push('/');
+            }
+          });
+         
+        }else{
+          this.$message({
+            message: '电影添加失败',
+            duration:1000,
+            type: 'error'
+          });          
+        }
       })
       .catch(e=>{
        console.log(e)
