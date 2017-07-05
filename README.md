@@ -1,15 +1,15 @@
 # vue_20170617
 
-> A Vue.js project
+> A Vue.js + mongodb + element-ui + node + express project
 
 ## Build Setup
 
 ``` bash
 # install dependencies
-npm install
+npm install 
 
 # serve with hot reload at localhost:8080
-npm run dev
+node app npm run dev 
 
 # build for production with minification
 npm run build
