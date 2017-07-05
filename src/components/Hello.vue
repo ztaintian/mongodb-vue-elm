@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
   <el-button class="search" type="primary" @click="seach" icon="search">评分搜索</el-button>
-  <el-input v-model="seachData"></el-input>
+  <el-input class="search_ipt" v-model="seachData"></el-input>
   <el-table
     :data="tableData"
     border
@@ -114,11 +114,9 @@ export default {
     seach(){
       let id = this.seachData;
       this.$http.get(`/api/movie/${id}`).then(res=>{
-        console.log(res.data);
-        console.log(this.tableData);
-        let arr = [];
-        arr.push(res.data);
-        arr.forEach(function(value){
+        // let arr = [];
+        // arr.push(res.data);
+        res.data.forEach(function(value){
           var d = new Date(value.createdTime);
           var year = d.getFullYear();
           var month = d.getMonth() + 1 < 10?'0' +(d.getMonth()+1):''+ d.getMonth();
@@ -128,14 +126,12 @@ export default {
           var seconds = d.getSeconds()<10? '0' + d.getSeconds() : '' +  d.getSeconds();
           value.createdTime = year+ '-' + month + '-' + day + ' ' + hour + ':' + minutes + ':' + seconds;
         })
-        this.tableData = arr;
-        console.log(this.tableData)
+        this.tableData = res.data;
       }).catch(err=>{
         console.log(err);
       })
     },
     modify(id){
-      console.log(this.formLabelAlign)
       this.$http.put(`/api/movie/${id}`,this.formLabelAlign).then(res=>{
         console.log(res);
       }).catch(err=>{
@@ -212,7 +208,7 @@ export default {
   margin-top: 15px;
   text-align:center;
 }
-.el-input, .el-input__inner{
+.search_ipt{
   width:200px;
   margin-top:15px;
   float: right;

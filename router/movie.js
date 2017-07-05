@@ -44,8 +44,8 @@ router.post('/movie',(req,res)=>{
  })
 
  //查询一部电影
- router.get('/movie/:id',(req,res)=>{
- 	Movie.findById(req.params.id)
+ router.get('/movie/:rating',(req,res)=>{
+ 	Movie.find({rating:req.params.rating})
  		.then(movie=>{
  			res.json(movie)
  		}).catch(err=>{
