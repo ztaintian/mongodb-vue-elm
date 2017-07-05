@@ -2,18 +2,14 @@
   <div class="hello">
   <el-button class="search" type="primary" @click="seach" icon="search">评分搜索</el-button>
   <el-input class="search_ipt" v-model="seachData"></el-input>
-  <el-table 
-    :data="tableData" 
-    border
-    :default-sort = "{prop: 'createdTime', order:'descending'}" 
-    height="500"
-    >
+  <el-table
+    :data="tableData"
+    border>
       <el-table-column
         align="center"
         prop="createdTime"
         label="创建时间"
-        width="180"
-        sortable>
+        width="180">
       </el-table-column>
       <el-table-column
         align="center"
@@ -37,10 +33,12 @@
       <el-table-column
         align="center"
         label="操作"
+        prop="_id"
+        :formatter="formatter"
         width="180">
-        <template scope="scope">
-          <el-button @click="del(scope.$index, tableData)" type="danger" size="small">删除</el-button>
-          <el-button @click="edit(scope.$index, tableData)" size="small">编辑</el-button>
+        <template  scope="props">
+          <el-button @click="del(props.row._id)" type="danger" size="small">删除</el-button>
+          <el-button @click="edit(props.row._id)" size="small">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,11 +117,14 @@ export default {
     seach(){
       let id = this.seachData;
       this.$http.get(`/api/movie/${id}`).then(res=>{
-        this.dataFilter(res.data);        
+        this.dataFilter(res.data);
         this.tableData = res.data;
       }).catch(err=>{
         console.log(err);
       })
+    },
+    formatter(row, column) {
+        return row._id;
     },
     modify(id){
       this.$http.put(`/api/movie/${id}`,this.formLabelAlign).then(res=>{
@@ -168,8 +169,7 @@ export default {
     add(){//增加
       this.$router.push('Detail')
     },
-    del(index,value){//删除电影
-      let id = value[index]._id;
+    del(id){//删除电影
       this.$http.delete(`/api/movie/${id}`).then(res=>{
         if(res.status === 200){
           this.$message({
@@ -185,7 +185,6 @@ export default {
             duration:1000
           })
         }
-        
       })
     },
     getAllMovies(){
