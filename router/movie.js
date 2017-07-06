@@ -54,30 +54,25 @@ router.post('/movie',(req,res)=>{
  })
 //查询所以电影
 router.post('/allMovie',(req,res) =>{
-	let num = req.body.num;
-	// console.log(Movie.find(req.body).length)
-	Movie.find()
-		.sort({updateTime:-1}).skip(num*10-10).limit(10)
+	let num = req.body.num || 1;
+	let rating = req.body.rating;
+	let pageTotle;
+	let obj = {};
+	let data = {};
+	if(rating){
+		data.rating = rating;
+	}
+	Movie.find(data).count((err, res)=>{
+		pageTotle =Math.ceil(res/10);
+	})
+	Movie.find(data).sort({updateTime:-1}).skip(num*10-10).limit(10)
 		.then(movies =>{
-			res.json(movies)
+			obj.data = movies;
+			obj.pageTotle = pageTotle;
+			res.json(obj)
 		})
 		.catch(err=>{
-			// res.json(err)
+			res.json(err)
 		})
 })
-
-// //分页查询数据
-// router.post('/movie',(req,res) =>{
-// 	Movie.find({})
-// 		.sort({updateTime:-1}).limit(10)
-// 		.then(movies =>{
-// 			res.json(movies)
-// 		})
-// 		.catch(err=>{
-// 			res.json(err)
-// 		})
-// })
-
-
-
 module.exports = router

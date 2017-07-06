@@ -44,7 +44,7 @@
     <div class="pagination">
       <el-pagination
       layout="prev, pager, next"
-      :total="100"
+      :total="pagaNum"
       @current-change="handleCurrentChange">
       </el-pagination>      
     </div>
@@ -100,6 +100,7 @@ export default {
       labelPosition: 'right',
       id:'',
       seachData:'',
+      pagaNum:Number,
       formLabelAlign: {
         title: '',
         poster: '',
@@ -117,7 +118,7 @@ export default {
     }
   },
   mounted(){
-    this.getAllMovies(1);
+    this.getAllMovies();
   },
   methods:{
     handleCurrentChange(val){
@@ -128,13 +129,14 @@ export default {
       }
     },
     seach(){
-      let id = this.seachData;
-      this.$http.get(`/api/movie/${id}`).then(res=>{
-        this.dataFilter(res.data);
-        this.tableData = res.data;
-      }).catch(err=>{
-        console.log(err);
-      })
+      // let id = this.seachData;
+      // this.$http.get(`/api/movie/${id}`).then(res=>{
+      //   this.dataFilter(res.data);
+      //   this.tableData = res.data;
+      // }).catch(err=>{
+      //   console.log(err);
+      // })
+      this.getAllMovies();
     },
     modify(id){
       this.$http.put(`/api/movie/${id}`,this.formLabelAlign).then(res=>{
@@ -200,9 +202,10 @@ export default {
     },
     getAllMovies(num){
       let rating =  this.seachData;
-      this.$http.post('/api/allMovie',{num:`${num}`}).then(res=>{
-        this.dataFilter(res.data);
-        this.tableData = res.data;
+      this.$http.post('/api/allMovie',{num:`${num}`,rating:`${rating}`}).then(res=>{
+        this.dataFilter(res.data.data);
+        this.tableData = res.data.data;
+        this.pagaNum = res.data.pageTotle*10;
       })
       .catch(e=>{
        console.log(e)
