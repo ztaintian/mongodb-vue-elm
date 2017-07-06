@@ -16,7 +16,7 @@ app.use('/api',movie)
 mongoose.Promise = global.Promise
 const db = mongoose.connect('mongodb://localhost:27017/vueData')
 
-const doubanUrl = 'https://bird.ioliu.cn/v1?url=http://api.douban.com/v2/movie/top250?count='
+const doubanUrl = 'http://api.douban.com/v2/movie/top250?count='
 let fetchData = num =>{
 	const url = `${doubanUrl}${num}`
 	axios.get(url).then(res=>{
@@ -39,7 +39,7 @@ let fetchData = num =>{
 		console.log(err)
 	})
 }
-fetchData(10)
+fetchData(30)
 db.connection.on("error", function (error) {
   console.log("数据库连接失败：" + error)
 })

@@ -53,16 +53,30 @@ router.post('/movie',(req,res)=>{
  		})
  })
 //查询所以电影
-router.get('/movie',(req,res) =>{
-	Movie.find({})
-				.sort({updateTime:-1})
-				.then(movies =>{
-					res.json(movies)
-				})
-				.catch(err=>{
-					res.json(err)
-				})
+router.post('/allMovie',(req,res) =>{
+	let num = req.body.num;
+	// console.log(Movie.find(req.body).length)
+	Movie.find()
+		.sort({updateTime:-1}).skip(num*10-10).limit(10)
+		.then(movies =>{
+			res.json(movies)
+		})
+		.catch(err=>{
+			// res.json(err)
+		})
 })
+
+// //分页查询数据
+// router.post('/movie',(req,res) =>{
+// 	Movie.find({})
+// 		.sort({updateTime:-1}).limit(10)
+// 		.then(movies =>{
+// 			res.json(movies)
+// 		})
+// 		.catch(err=>{
+// 			res.json(err)
+// 		})
+// })
 
 
 

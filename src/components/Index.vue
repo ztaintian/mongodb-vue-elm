@@ -34,14 +34,20 @@
         align="center"
         label="操作"
         prop="_id"
-        :formatter="formatter"
         width="180">
         <template  scope="props">
           <el-button @click="del(props.row._id)" type="danger" size="small">删除</el-button>
-          <el-button @click="edit(props.row._id)" size="small">编辑</el-button>
+          <el-button @click="edit(props.row)" size="small">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <div class="pagination">
+      <el-pagination
+      layout="prev, pager, next"
+      :total="100"
+      @current-change="handleCurrentChange">
+      </el-pagination>      
+    </div>
     <div class="button">
       <el-button type="primary" icon="plus" @click="add()">增加</el-button>
     </div>
@@ -111,9 +117,16 @@ export default {
     }
   },
   mounted(){
-    this.getAllMovies();
+    this.getAllMovies(1);
   },
   methods:{
+    handleCurrentChange(val){
+      if(this.seachData){
+        this.seach();
+      }else{
+        this.getAllMovies(val);
+      }
+    },
     seach(){
       let id = this.seachData;
       this.$http.get(`/api/movie/${id}`).then(res=>{
@@ -122,9 +135,6 @@ export default {
       }).catch(err=>{
         console.log(err);
       })
-    },
-    formatter(row, column) {
-        return row._id;
     },
     modify(id){
       this.$http.put(`/api/movie/${id}`,this.formLabelAlign).then(res=>{
@@ -162,9 +172,10 @@ export default {
     handleClose(done) {
       done();
     },
-    edit(index,value){//编辑电影
+    edit(data){//编辑电影
       this.dialogVisible = true;
-      this.id = value[index]._id;
+      this.id = data._id;
+      this.formLabelAlign = data;
     },
     add(){//增加
       this.$router.push('Detail')
@@ -187,8 +198,9 @@ export default {
         }
       })
     },
-    getAllMovies(){
-      this.$http.get('/api/movie',{}).then(res=>{
+    getAllMovies(num){
+      let rating =  this.seachData;
+      this.$http.post('/api/allMovie',{num:`${num}`}).then(res=>{
         this.dataFilter(res.data);
         this.tableData = res.data;
       })
@@ -239,5 +251,9 @@ export default {
 .search {
   margin:15px;
   float:right;
+}
+.pagination{
+  float: right;
+  margin: 10px;
 }
 </style>
