@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 const movieSchema =mongoose.Schema({
 	title:{//电影名称
 		type:String,
-		require:true
+		require:true,
+		unique:true
 	},
 	poster:String,//简介
 	rating:String,//评分

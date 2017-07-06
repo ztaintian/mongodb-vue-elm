@@ -39,7 +39,7 @@ let fetchData = num =>{
 		console.log(err)
 	})
 }
-fetchData(5)
+fetchData(10)
 db.connection.on("error", function (error) {
   console.log("数据库连接失败：" + error)
 })
