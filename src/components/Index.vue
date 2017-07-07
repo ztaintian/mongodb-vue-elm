@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
   <el-button class="search" type="primary" @click="seach" icon="search">评分搜索</el-button>
-  <el-input class="search_ipt" v-model="seachData"></el-input>
+  <el-input class="search_ipt" @keyup.enter.native="submit" v-model="seachData"  ></el-input>
   <el-table
     :data="tableData"
     border>
@@ -28,7 +28,7 @@
       <el-table-column
         align="center"
         prop="introduction"
-        label="介绍">
+        label="类型">
       </el-table-column>
       <el-table-column
         align="center"
@@ -44,9 +44,9 @@
     <div class="pagination">
       <el-pagination
       layout="prev, pager, next"
-      :total="pagaNum"
+      :page-count="pagaNum"
       @current-change="handleCurrentChange">
-      </el-pagination>      
+      </el-pagination>      <!-- :total="pagaNum" -->   
     </div>
     <div class="button">
       <el-button type="primary" icon="plus" @click="add()">增加</el-button>
@@ -100,7 +100,7 @@ export default {
       labelPosition: 'right',
       id:'',
       seachData:'',
-      pagaNum:Number,
+      pagaNum:0,
       formLabelAlign: {
         title: '',
         poster: '',
@@ -121,6 +121,9 @@ export default {
     this.getAllMovies();
   },
   methods:{
+    submit(){
+      this.getAllMovies();
+    },
     handleCurrentChange(val){
       if(this.seachData){
         this.seach();
@@ -129,13 +132,6 @@ export default {
       }
     },
     seach(){
-      // let id = this.seachData;
-      // this.$http.get(`/api/movie/${id}`).then(res=>{
-      //   this.dataFilter(res.data);
-      //   this.tableData = res.data;
-      // }).catch(err=>{
-      //   console.log(err);
-      // })
       this.getAllMovies();
     },
     modify(id){
@@ -205,7 +201,8 @@ export default {
       this.$http.post('/api/allMovie',{num:`${num}`,rating:`${rating}`}).then(res=>{
         this.dataFilter(res.data.data);
         this.tableData = res.data.data;
-        this.pagaNum = res.data.pageTotle*10;
+        this.pagaNum = res.data.pageTotle;
+        console.log(typeof(this.pagaNum))
       })
       .catch(e=>{
        console.log(e)
